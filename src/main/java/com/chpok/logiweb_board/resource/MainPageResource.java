@@ -1,7 +1,4 @@
-package com.chpok.logiweb_board;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+package com.chpok.logiweb_board.resource;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

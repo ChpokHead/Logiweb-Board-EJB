@@ -1,9 +1,9 @@
 $(document).ready(function() {
     setInterval(function() {
-        cache_clear()
-    }, 5000);
+        reload()
+    }, 10000);
 });
 
-function cache_clear() {
+function reload() {
     window.location.reload();
 }

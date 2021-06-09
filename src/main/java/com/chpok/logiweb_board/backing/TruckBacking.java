@@ -1,4 +1,9 @@
-package com.chpok.logiweb_board;
+package com.chpok.logiweb_board.backing;
+
+import com.chpok.logiweb_board.model.Location;
+import com.chpok.logiweb_board.model.Truck;
+import com.chpok.logiweb_board.service.LocationService;
+import com.chpok.logiweb_board.service.TruckService;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
