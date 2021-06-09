@@ -22,6 +22,10 @@ public class TruckBacking {
     @PostConstruct
     private void init() {
         availableLocations = locationService.getAvailableLocations();
+
+        if (!availableLocations.isEmpty()) {
+            specifiedLocationName = availableLocations.get(0).getName();
+        }
     }
 
     public String getSpecifiedLocationName() {
