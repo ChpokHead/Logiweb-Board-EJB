@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html lang="ru"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html">
+
+<h:head>
+    <title>JSF 2.0 Hello World</title>
+    <h:outputStylesheet name="css/bootstrap.min.css"/>
+    <h:outputScript name="js/bootstrap.bundle.min.js"/>
+</h:head>
+<h:body>
+    <div class="container-fluid">
+        <div class="row flex-wrap">
+            <div class="row">
+                <div class="col py-2">
+                    <h:form>
+                        <h:selectOneMenu value="#{truckBacking.specifiedLocationName}">
+                            <f:selectItems var="location"
+                                           value="#{truckBacking.availableLocations}"
+                                           itemLabel="#{location.name}"
+                                           itemValue="#{location.name}"/>
+                        </h:selectOneMenu>
+                        <div class="row">
+                            <div class="col py-2">
+                                <h:commandButton styleClass="btn btn-primary" value="submit" action="mainPage.xhtml"/>
+                            </div>
+                        </div>
+                    </h:form>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col py-1">
+                    <h:dataTable value="#{truckBacking.trucksAtSpecifiedLocation}" var="truck" styleClass="table table-dark table-striped table-hover">
+                        <h:column>
+                            <f:facet name="header">Рег. номер</f:facet>
+                            #{truck.regNumber}
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">Вместимость</f:facet>
+                            #{truck.capacity}
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">Размер смены</f:facet>
+                            #{truck.driversShift}
+                        </h:column>
+                    </h:dataTable>
+                </div>
+            </div>
+        </div>
+    </div>
+</h:body>
+</html>
