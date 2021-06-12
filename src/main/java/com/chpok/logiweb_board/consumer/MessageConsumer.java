@@ -19,6 +19,8 @@ import java.util.List;
 public class MessageConsumer {
     private static final Logger LOGGER = LoggerFactory.getLogger(MessageConsumer.class);
     private static final String GET_TRUCKS_URL = "http://localhost:8080/employeeTruck/trucks";
+    private static final String GET_TRUCK_URL = "http://localhost:8080/employeeTruck/trucks/%d";
+    private static final String ID_PART_OF_MESSAGE = "id = ";
 
     @EJB
     private TruckDao truckDao;
@@ -27,13 +29,41 @@ public class MessageConsumer {
     public void onMessage(final String message) {
         LOGGER.info("New message: {}", message);
 
+        if (message.contains("truck updated")) {
+            onTruckUpdated(message);
+        } else if (message.contains("truck deleted")) {
+            onTruckDeleted(message);
+        } else if (message.contains("truck saved")) {
+            onTruckSaved();
+        }
+    }
+
+    private void onTruckUpdated(String message) {
+        final int idIndex = message.indexOf(ID_PART_OF_MESSAGE);
+        final int id = Integer.parseInt(message.substring(idIndex + ID_PART_OF_MESSAGE.length()));
+
+        truckDao.update(ClientBuilder
+                .newClient()
+                .target(String.format(GET_TRUCK_URL, id))
+                .request(MediaType.APPLICATION_JSON_TYPE)
+                .get(new GenericType<Truck>(){}));
+    }
+
+    private void onTruckSaved() {
         truckDao.deleteAll();
 
-        truckDao.save(ClientBuilder
+        truckDao.saveList(ClientBuilder
                 .newClient()
                 .target(GET_TRUCKS_URL)
                 .request(MediaType.APPLICATION_JSON_TYPE)
                 .get(new GenericType<List<Truck>>(){}));
+    }
+
+    public void onTruckDeleted(String message) {
+        final int idIndex = message.indexOf(ID_PART_OF_MESSAGE);
+        final int id = Integer.parseInt(message.substring(idIndex + ID_PART_OF_MESSAGE.length()));
+
+        truckDao.delete((long) id);
     }
 
 }

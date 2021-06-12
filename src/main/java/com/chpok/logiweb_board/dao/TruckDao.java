@@ -20,10 +20,28 @@ public class TruckDao {
         return entityManager.createQuery(FIND_ALL_QUERY, Truck.class).getResultList();
     }
 
-    public void save(List<Truck> savingTrucks) {
+    public void saveList(List<Truck> savingTrucks) {
         for (Truck truck : savingTrucks) {
             entityManager.persist(truck);
         }
+
+        entityManager.flush();
+    }
+
+    public void save(Truck savingTruck) {
+        entityManager.persist(savingTruck);
+
+        entityManager.flush();
+    }
+
+    public void update(Truck updatingTruck) {
+        final Truck oldTruck = entityManager.find(Truck.class, updatingTruck.getId());
+
+        oldTruck.setRegNumber(updatingTruck.getRegNumber());
+        oldTruck.setCapacity(updatingTruck.getCapacity());
+        oldTruck.setDriversShift(updatingTruck.getDriversShift());
+        oldTruck.setLocation(updatingTruck.getLocation());
+        oldTruck.setStatus(updatingTruck.getStatus());
 
         entityManager.flush();
     }
