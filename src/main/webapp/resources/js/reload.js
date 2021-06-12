@@ -1,9 +1,3 @@
 $(document).ready(function() {
-    setInterval(function() {
-        reload()
-    }, 10000);
+    setTimeout("location.reload();",10000);
 });
-
-function reload() {
-    window.location.reload();
-}

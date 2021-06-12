@@ -16,41 +16,54 @@
 <h:body>
     <div class="container-fluid">
         <div class="row flex-wrap">
-            <div class="row">
-                <div class="col py-2">
-                    <h:form>
-                        <h:selectOneMenu value="#{truckBacking.specifiedLocationName}">
-                            <f:selectItems var="location"
-                                           value="#{truckBacking.availableLocations}"
-                                           itemLabel="#{location.name}"
-                                           itemValue="#{location.name}"/>
-                        </h:selectOneMenu>
-                        <div class="row">
-                            <div class="col py-2">
-                                <h:commandButton styleClass="btn btn-primary" value="Подтвердить" action="mainPage.xhtml"/>
-                            </div>
+            <div class="col">
+                <div class="row">
+                    <div class="col py-2">
+                        <div class="d-flex justify-content-center">
+                            <h:outputText value="Выберите город для отображения фур" styleClass="h3"/>
                         </div>
-                    </h:form>
+                    </div>
+                </div>
+                <h:form styleClass="row py-2">
+                    <div class="col py-2">
+                        <div class="d-flex justify-content-end">
+                            <h:selectOneMenu value="#{truckBacking.specifiedLocationName}" styleClass="form-select" style="width: 30%">
+                                <f:selectItems var="location"
+                                               value="#{truckBacking.availableLocations}"
+                                               itemLabel="#{location.name}"
+                                               itemValue="#{location.name}"/>
+                            </h:selectOneMenu>
+                        </div>
+                    </div>
+                    <div class="col py-2">
+                        <h:commandButton styleClass="btn btn-primary btn-dark" value="Показать" action="mainPage.xhtml"/>
+                    </div>
+                </h:form>
+                <div class="row">
+                    <div class="col py-1">
+                        <h:dataTable value="#{truckBacking.trucksAtSpecifiedLocation}" var="truck" styleClass="table table-dark table-striped table-hover">
+                            <h:column>
+                                <f:facet name="header">Рег. номер</f:facet>
+                                #{truck.regNumber}
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">Вместимость</f:facet>
+                                #{truck.capacity}
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">Размер смены</f:facet>
+                                #{truck.driversShift}
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">Состояние</f:facet>
+                                <h:outputText value="Исправен" rendered="#{truck.status eq 0}"/>
+                                <h:outputText value="Неисправен" rendered="#{truck.status eq 1}"/>
+                            </h:column>
+                        </h:dataTable>
+                    </div>
                 </div>
             </div>
-            <div class="row">
-                <div class="col py-1">
-                    <h:dataTable value="#{truckBacking.trucksAtSpecifiedLocation}" var="truck" styleClass="table table-dark table-striped table-hover">
-                        <h:column>
-                            <f:facet name="header">Рег. номер</f:facet>
-                            #{truck.regNumber}
-                        </h:column>
-                        <h:column>
-                            <f:facet name="header">Вместимость</f:facet>
-                            #{truck.capacity}
-                        </h:column>
-                        <h:column>
-                            <f:facet name="header">Размер смены</f:facet>
-                            #{truck.driversShift}
-                        </h:column>
-                    </h:dataTable>
-                </div>
-            </div>
+
         </div>
     </div>
 </h:body>
