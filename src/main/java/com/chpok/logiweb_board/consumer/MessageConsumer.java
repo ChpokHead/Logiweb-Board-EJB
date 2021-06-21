@@ -2,6 +2,7 @@ package com.chpok.logiweb_board.consumer;
 
 import com.chpok.logiweb_board.dao.TruckDao;
 import com.chpok.logiweb_board.model.Truck;
+import com.chpok.logiweb_board.model.kafka.LogiwebMessage;
 import org.aerogear.kafka.cdi.annotation.Consumer;
 import org.aerogear.kafka.cdi.annotation.KafkaConfig;
 import org.slf4j.Logger;
@@ -18,52 +19,48 @@ import java.util.List;
 @Stateless
 public class MessageConsumer {
     private static final Logger LOGGER = LoggerFactory.getLogger(MessageConsumer.class);
-    private static final String GET_TRUCKS_URL = "http://localhost:8080/employeeTruck/trucks";
     private static final String GET_TRUCK_URL = "http://localhost:8080/employeeTruck/trucks/%d";
-    private static final String ID_PART_OF_MESSAGE = "id = ";
 
     @EJB
     private TruckDao truckDao;
 
-    @Consumer(topics = "logiweb", groupId = "logiweb-group")
-    public void onMessage(final String message) {
-        LOGGER.info("New message: {}", message);
+    @Consumer(topics = "logiweb-truck", groupId = "logiweb-group")
+    public void onMessage(final LogiwebMessage message) {
+        LOGGER.info("New message: {} with id {}", message.getEntityEventMessage(), message.getEntityId());
 
-        if (message.contains("truck updated")) {
-            onTruckUpdated(message);
-        } else if (message.contains("truck deleted")) {
-            onTruckDeleted(message);
-        } else if (message.contains("truck saved")) {
-            onTruckSaved();
+        switch (message.getEntityEventMessage()) {
+            case "truck saved":
+                onTruckSaved(message.getEntityId());
+                break;
+            case "truck updated":
+                onTruckUpdated(message.getEntityId());
+                break;
+            case "truck deleted":
+                onTruckDeleted(message.getEntityId());
+                break;
+            default:
+                break;
         }
     }
 
-    private void onTruckUpdated(String message) {
-        final int idIndex = message.indexOf(ID_PART_OF_MESSAGE);
-        final int id = Integer.parseInt(message.substring(idIndex + ID_PART_OF_MESSAGE.length()));
-
+    private void onTruckUpdated(Long entityId) {
         truckDao.update(ClientBuilder
                 .newClient()
-                .target(String.format(GET_TRUCK_URL, id))
+                .target(String.format(GET_TRUCK_URL, entityId))
                 .request(MediaType.APPLICATION_JSON_TYPE)
                 .get(new GenericType<Truck>(){}));
     }
 
-    private void onTruckSaved() {
-        truckDao.deleteAll();
-
-        truckDao.saveList(ClientBuilder
+    private void onTruckSaved(Long entityId) {
+        truckDao.save(ClientBuilder
                 .newClient()
-                .target(GET_TRUCKS_URL)
+                .target(String.format(GET_TRUCK_URL, entityId))
                 .request(MediaType.APPLICATION_JSON_TYPE)
-                .get(new GenericType<List<Truck>>(){}));
+                .get(new GenericType<Truck>(){}));
     }
 
-    public void onTruckDeleted(String message) {
-        final int idIndex = message.indexOf(ID_PART_OF_MESSAGE);
-        final int id = Integer.parseInt(message.substring(idIndex + ID_PART_OF_MESSAGE.length()));
-
-        truckDao.delete((long) id);
+    public void onTruckDeleted(Long entityId) {
+        truckDao.delete(entityId);
     }
 
 }
